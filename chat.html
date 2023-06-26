@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Example</title>
+    <style>
+        body {
+            background-color: #292b2f; 
+            color: white;
+        }
+
+        #message-container {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #292b2f;
+            padding: 10px;
+        }
+
+        #message-container p {
+            margin: 0;
+            padding: 5px;
+        }
+
+        #message-input {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="message-container"></div>
+    <form id="message-form">
+        <input type="text" id="message-input" placeholder="Type your message..." />
+        <button type="submit">Send</button>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    // Get the client's name
+    var name = prompt("Enter your name:");
+
+    // Send the message to the server
+    function sendMessage() {
+      var message = $('#message-input').val();
+      socket.emit('message', { name: name, message: message });
+      $('#message-input').val('').focus();
+    }
+
+    // Receive messages from the server and display them
+    socket.on('message', function(data) {
+      $('#message-container').append('<p><strong>' + data.name + ':</strong> ' + data.message + '</p>');
+    });
+
+    // Send the message when the form is submitted
+    $('#message-form').submit(function(event) {
+      event.preventDefault();
+      sendMessage();
+    });
+  });
+</script>
+    
+</body>
+</html>
